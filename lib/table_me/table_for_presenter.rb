@@ -1,0 +1,119 @@
+require_dependency 'table_me/table_me_presenter'
+require_dependency 'table_me/table_pagination'
+module TableMe
+  #sample url variable table_me
+  #table_me=course|1|created_at,user|2|username
+  class TableForPresenter
+    attr_accessor :parent, :params
+
+    # it's easier to delagate the capture and tag helper methods to the view, since there are things
+    # such as haml dependancies that need to be included as well
+    def initialize parent
+      self.parent = parent
+    end
+
+    delegate :capture, :content_tag, to: :parent
+
+    def build_table model, options = {}, &block
+      @table_block = block
+
+      get_data_from_controller_for model.to_s.downcase
+      new_builder
+      table_me_wrapper(assemble_table)
+    end
+
+    private
+
+    def get_data_from_controller_for model_name
+      @table_data = TableMePresenter.get_data_for model_name
+      self.params = TableMePresenter.get_params_for model_name
+    end
+
+    def new_builder
+      @builder = TableMeBuilder.new
+    end
+
+    def table_me_wrapper content
+      pagination = TablePagination.new(params)
+      content_tag :div, class: "table-me-table #{params[:name]}-table" do
+        "#{pagination.pagination_info} #{content} #{pagination.pagination_controls}".html_safe
+      end
+    end
+
+    def assemble_table
+      content_tag :table do
+        "#{build_table_head} #{build_table_body}".html_safe
+      end
+    end
+
+    def build_table_head
+      if @table_block
+        header = capture(@builder,&@table_block)
+      else
+        header = @table_data.first.class.attribute_names.map do |name|
+          @builder.column(name)
+        end.join
+      end
+      content_tag(:thead, header.html_safe)
+    end
+
+    def build_table_body
+      body = @table_data.map do |data|
+        build_row(data)
+      end.join("\n")
+
+      content_tag(:tbody, body.html_safe)
+    end
+
+    def build_row item
+      content_tag(:tr, class: cycle('even', 'odd')) do
+        @builder.names.map do |col_name|
+          build_table_data(item, col_name)
+        end.join("\n").html_safe
+      end
+    end
+
+    def build_table_data item,col_name
+      # NOTE I was getting a weird gsub error when trying to use content_tag here for some reason.
+      "<td>#{
+        if block = @builder.get_block_for(col_name)
+          capture(item, &block)
+        else
+          item.send(col_name)
+        end
+      }</td>"
+    end
+
+    def cycle *values
+      @values = values if @values.nil? || @values.empty?
+      @values.shift
+    end
+    
+    class TableMeBuilder
+      include ActionView::Helpers::TagHelper
+
+      def initialize
+        @names = []
+        @blocks = {}
+      end
+
+      def column(name, &block)
+        @names << name 
+        @blocks[name] = block unless block.nil?
+        content_tag(:th, name)
+      end
+
+      def get_block_for name
+        if @blocks.key?(name)
+          @blocks[name]
+        else
+          false
+        end  
+      end
+
+      def names
+        @names
+      end
+    end
+  end
+end

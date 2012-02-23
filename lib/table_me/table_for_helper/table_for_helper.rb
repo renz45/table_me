@@ -10,11 +10,17 @@ require_dependency 'table_me/table_for_presenter'
 module TableMe
   module TableForHelper
     def table_for(model,options = {},&block)
-
       table_for_presenter = TableForPresenter.new(self)
       table_for_presenter.build_table(model,options,&block)
     end
     
-    
+    def highlight_cell value, colors
+      color = colors.key(value).to_s
+      unless color.empty?
+        "<span class='#{color}'>#{value}</span>".html_safe
+      else
+        value
+      end
+    end
   end
-end # TableMeControllerHelper
+end

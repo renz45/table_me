@@ -86,6 +86,10 @@ module TableMe
       }</td>"
     end
 
+    def highlight_cell value, colors
+      "<span class='#{colors.key(value).to_s}'>#{value.to_s}</span>".html_safe
+    end
+
     def cycle *values
       @values = values if @values.nil? || @values.empty?
       @values.shift

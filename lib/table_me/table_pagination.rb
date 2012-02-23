@@ -9,7 +9,7 @@ module TableMe
     def pagination_info
       <<-HTML.strip_heredoc
         <div class='table-me-pagination-info'>
-          <b>#{params[:page]}</b> of <b>#{params[:page_total]}</b> out of a total <b>#{params[:total_count]}</b>
+          <h3>#{params[:name].split('_').join(' ').titleize}</h3> <p><b>#{params[:page]}</b> of <b>#{params[:page_total]}</b> out of a total <b>#{params[:total_count]}</b></p>
         </div>
       HTML
     end

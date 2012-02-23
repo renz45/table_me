@@ -15,9 +15,24 @@ module TableMe
     end
     
     def highlight_cell value, colors
-      color = colors.key(value).to_s
+       color_value = output_value = color = ''
+
+      colors.each do |k,v|
+        if v.kind_of? Array
+          color_value = v[0]
+          output_value = v[1]
+        else
+          output_value = color_value = v
+        end
+        
+        if color_value == value
+          color = k.to_s
+          break
+        end
+      end
+
       unless color.empty?
-        "<span class='#{color}'>#{value}</span>".html_safe
+        "<span class='#{color}'>#{output_value}</span>".html_safe
       else
         value
       end

@@ -15,7 +15,11 @@ module TableMe
     end
 
     def pagination_controls
-      "<a href='#{prev_page_url}'>&laquo; prev</a> #{pagination_number_list} <a href='#{next_page_url}'>next &raquo;</a>"
+      <<-HTML.strip_heredoc
+        <div class='table-me-pagination-controls'>
+          <a href="#{prev_page_url}">&laquo; Prev</a> #{pagination_number_list} <a href="#{next_page_url}">Next &raquo;</a>
+        </div>
+      HTML
     end
 
     def next_page_url

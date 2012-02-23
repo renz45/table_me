@@ -16,8 +16,10 @@ module TableMe
 
     def build_table model, options = {}, &block
       @table_block = block
+      options[:class] ||= ""
 
       get_data_from_controller_for model.to_s.downcase
+      self.params = self.params.merge options
       new_builder
       table_me_wrapper(assemble_table)
     end
@@ -35,7 +37,7 @@ module TableMe
 
     def table_me_wrapper content
       pagination = TablePagination.new(params)
-      content_tag :div, class: "table-me-table #{params[:name]}-table" do
+      content_tag :div, class: "table-me-table #{params[:name]}-table #{params[:class]}" do
         "#{pagination.pagination_info} #{content} #{pagination.pagination_controls}".html_safe
       end
     end
@@ -100,7 +102,7 @@ module TableMe
       def column(name, &block)
         @names << name 
         @blocks[name] = block unless block.nil?
-        content_tag(:th, name)
+        content_tag(:th, name.to_s.split('_').join(' ').titleize)
       end
 
       def get_block_for name

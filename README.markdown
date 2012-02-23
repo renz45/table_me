@@ -30,6 +30,7 @@ table_me( User )
 Possible options available for this method are:
 
 `name` - Label for the the table
+
 `per_page` - The amount of items per page of the table
 
 ## View

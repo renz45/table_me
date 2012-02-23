@@ -53,9 +53,13 @@ module TableMe
 
     def number_span link_number
       if params[:page].to_s == link_number.to_s
-        "<span class='page current'>#{link_number}</span>"
+        <<-HTML.strip_heredoc
+          <span class='page current'>#{link_number}</span>
+        HTML
       else
-        "<span class='page'><a href=#{link_for_page(link_number)}>#{link_number}</a></span>"
+        <<-HTML.strip_heredoc
+          <span class='page'><a href='#{link_for_page(link_number)}'>#{link_number}</a></span>
+        HTML
       end
     end
 

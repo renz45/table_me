@@ -1,4 +1,4 @@
-require_dependency 'table_me/table_me_presenter'
+require 'table_me/table_me_presenter'
 module TableMe
   module TableMeHelper
     def table_me(model, options = {})

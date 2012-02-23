@@ -1,5 +1,5 @@
-require_dependency 'table_me/table_me_presenter'
-require_dependency 'table_me/table_pagination'
+require 'table_me/table_me_presenter'
+require 'table_me/table_pagination'
 module TableMe
   #sample url variable table_me
   #table_me=course|1|created_at,user|2|username

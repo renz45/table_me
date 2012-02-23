@@ -1,4 +1,4 @@
-require_dependency 'table_me/table_for_presenter'
+require 'table_me/table_for_presenter'
   #view
   # table_for :course, class: 'custom_table', id: 'the_table' do |t|
   #   t.column :id

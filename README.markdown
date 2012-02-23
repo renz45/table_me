@@ -97,3 +97,8 @@ table_for :user, class: 'light'
 This looks a little like this: 
 
 ![table me light table](http://cl.ly/3n410Q2l3C452x1V3Y3R/Screen%20Shot%202012-02-23%20at%209.57.37%20AM.png)
+
+## Things to add
+* Right now it's setup for column sorting, it just needs the links added to the header to generate the correct urls, I will probably add this later.
+* I would like some sort of scope sorting built in.
+* Some sort of filtering/search per table would be great as well.

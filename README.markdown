@@ -64,7 +64,7 @@ table_for :user do |t|
 end
 ```
 
-There is also a color highlighting helper called `highlight_cell`. So lets say that you want to have a visual que for if a user is an admin:
+There is also a color highlighting helper called `highlight_cell`. So lets say that you want to have a visual cue for if a user is an admin:
 
 ![highlight colors](http://cl.ly/3U031f1X1N0I45011K0W/Screen%20Shot%202012-02-23%20at%208.27.31%20AM.png)
 

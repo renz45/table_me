@@ -1,4 +1,4 @@
-require 'table_me/table_for_presenter'
+require File.expand_path('../../../table_me/table_for_presenter', __FILE__)
   #view
   # table_for :course, class: 'custom_table', id: 'the_table' do |t|
   #   t.column :id

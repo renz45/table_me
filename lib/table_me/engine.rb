@@ -1,5 +1,5 @@
-require 'table_me/table_me_helper/table_me_helper'
-require 'table_me/table_for_helper/table_for_helper'
+require File.expand_path('../table_me_helper/table_me_helper', __FILE__)
+require File.expand_path('../table_for_helper/table_for_helper', __FILE__)
 
 module TableMe
   class Engine < ::Rails::Engine

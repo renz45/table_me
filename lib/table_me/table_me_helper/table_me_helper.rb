@@ -1,4 +1,4 @@
-require 'table_me/table_me_presenter'
+require File.expand_path('../../../table_me/table_me_presenter', __FILE__)
 module TableMe
   module TableMeHelper
     def table_me(model, options = {})

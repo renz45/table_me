@@ -1,5 +1,5 @@
-require 'table_me/table_me_presenter'
-require 'table_me/table_pagination'
+require File.expand_path('../table_me_presenter', __FILE__)
+require File.expand_path('../table_pagination', __FILE__)
 module TableMe
   #sample url variable table_me
   #table_me=course|1|created_at,user|2|username

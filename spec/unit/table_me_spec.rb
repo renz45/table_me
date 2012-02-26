@@ -294,14 +294,31 @@ describe "TableMePresenter" do
               presenter_class.options[presenter.name].should eq presenter.options
             end
           end
-        
         end # "params[:table_me] = 'user|2|name ASC|email user'"
-
-
-
       end
     end # "with url params for multiple tables"
- 
+
+    describe 'Pagination' do
+      context 'page 2 with 2 users per page' do
+        let(:order) {"name ASC"}
+        let(:params) {{table_me: "user|2|#{order}|email user"}}
+        let(:presenter) { TableMe::TableMePresenter.new(User, {per_page: 2}, params) }
+        let(:user_list) {User.limit(10).order(order)}
+
+        describe 'presenter.data' do
+          it 'should contain items 3 and 4 from the user_list' do
+            presenter.data[0].should eq user_list[2]
+            presenter.data[1].should eq user_list[3]
+          end
+
+          it 'should be in the currect order' do
+            presenter.data[0].should eq user_list[2]
+            presenter.data[1].should eq user_list[3]
+          end
+        end
+      end
+    end
+
   end # 'with a model'
 
   

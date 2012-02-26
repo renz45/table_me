@@ -42,7 +42,14 @@ module TableMe
 
     def get_data_for model
       @@data[self.name] = @data = model.limit(options[:per_page])
+                                       .offset(start_item)
+                                       .order(options[:order])
+
       options[:page_total] = model.count
+    end
+
+    def start_item
+      (options[:page].to_i - 1) * options[:per_page]
     end
 
     def name= value

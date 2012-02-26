@@ -27,8 +27,10 @@ module TableMe
     private
 
     def get_data_from_controller_for model_name
-      @table_data = TableMePresenter.get_data_for model_name
-      self.params = TableMePresenter.get_params_for model_name
+      # @table_data = TableMePresenter.get_data_for model_name
+      # self.params = TableMePresenter.get_params_for model_name
+      @table_data = TableMePresenter.data
+      self.params = TableMePresenter.options
     end
 
     def new_builder

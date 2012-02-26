@@ -6,6 +6,7 @@ require 'rspec/rails'
 require 'rspec/autorun'
 require File.expand_path('../../lib/table_me/table_for_presenter', __FILE__)
 require 'factory_girl_rails'
+require 'pry'
 
 # Requires supporting ruby files with custom matchers and macros, etc,
 # in spec/support/ and its subdirectories.

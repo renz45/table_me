@@ -19,7 +19,8 @@ module TableMe
       options[:class] ||= ""
 
       get_data_from_controller_for model.to_s.downcase
-      self.params = self.params.merge options
+
+      self.params = self.params.merge(options)
       new_builder
       table_me_wrapper(assemble_table)
     end
@@ -29,8 +30,8 @@ module TableMe
     def get_data_from_controller_for model_name
       # @table_data = TableMePresenter.get_data_for model_name
       # self.params = TableMePresenter.get_params_for model_name
-      @table_data = TableMePresenter.data
-      self.params = TableMePresenter.options
+      @table_data = TableMePresenter.data[model_name]
+      self.params = TableMePresenter.options[model_name]
     end
 
     def new_builder

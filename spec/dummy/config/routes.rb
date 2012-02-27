@@ -1,4 +1,6 @@
 Dummy::Application.routes.draw do
+
+  get '/test_page' => 'test_page#index', as: 'test_page'
   # The priority is based upon order of creation:
   # first created -> highest priority.
 

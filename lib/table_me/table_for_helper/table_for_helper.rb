@@ -10,8 +10,8 @@ require File.expand_path('../../../table_me/table_for_presenter', __FILE__)
 module TableMe
   module TableForHelper
     def table_for(model,options = {},&block)
-      table_for_presenter = TableForPresenter.new(self)
-      table_for_presenter.build_table(model,options,&block)
+      table_for_presenter = TableForPresenter.new(model,options,&block)
+      table_for_presenter.build_table
     end
     
     def highlight_cell value, colors

@@ -45,19 +45,23 @@ module TableMe
     end
 
     def create_header
-      data.first.attribute_names.map do |name|
+      col_names.map do |name|
         "<th>#{name}</th>"
       end.join.html_safe
     end
 
     def table_rows
-      cols = data.first.attribute_names
       data.map do |d|
-        row = "<tr>"
-        row << cols.map {|col| "<td>#{d[col]}</td>"}.join
-        row << '</tr>'
-        row
+        <<-HTML
+          <tr>
+            #{col_names.map {|col| "<td>#{d[col]}</td>"}.join}
+          </tr>
+        HTML
       end.join
+    end
+
+    def col_names
+      data.first.attribute_names
     end
   #   private
   #   def get_data_from_controller_for model_name

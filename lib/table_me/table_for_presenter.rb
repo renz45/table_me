@@ -27,7 +27,7 @@ module TableMe
       # new_builder
       # table_me_wrapper(assemble_table)
       <<-HTML.strip_heredoc.html_safe
-        <div class='#{options[:class]}'>
+        <div>
           <table>
             <thead>
               <tr>#{create_header}</tr>

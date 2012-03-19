@@ -9,6 +9,7 @@ require 'factory_girl_rails'
 require 'pry'
 require 'capybara/rspec'
 
+
 include Capybara::DSL
 
 # Requires supporting ruby files with custom matchers and macros, etc,

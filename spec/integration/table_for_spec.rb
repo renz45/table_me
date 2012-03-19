@@ -1,8 +1,13 @@
 require 'spec_helper'
+require 'pry'
 
 describe 'table_for helper html' do 
+  let(:block_content) {proc{|c| "<span>#{c.email}</span>"}}
+  let(:block) { proc{|t| t.column :email, &block_content } }
   let(:table_me_presenter) {TableMe::TableMePresenter.new(User)}
   let(:table_for_presenter) {TableMe::TableForPresenter.new(:user)}
+  let(:table_for_presenter_block) {TableMe::TableForPresenter.new(:user, &block)}
+  let(:email) {User.first.email}
   before(:each) do 
     30.times { FactoryGirl.create(:user) } 
     table_me_presenter
@@ -13,7 +18,7 @@ describe 'table_for helper html' do
   
   describe 'TableForPresenter' do 
     context '#build_table with a table name' do
-      let(:table_html){Capybara::Node::Simple.new( table_for_presenter.build_table ) }
+      let(:table_html){ Capybara::Node::Simple.new( table_for_presenter.build_table ) }
       describe 'table_for_presenter.data' do
         it 'should be a ActiveRecord::Relation' do
           table_for_presenter.data.class.should eq ActiveRecord::Relation
@@ -125,8 +130,39 @@ describe 'table_for helper html' do
               end# it
             end # <tr></tr>
           end # <tbody></tbody>
+
         end # <table></table>
       end # without columns
+
+      context 'with columns' do
+        let(:table_html){Capybara::Node::Simple.new( table_for_presenter_block.build_table ) }
+        describe '<table></table>' do
+          describe '<thead></thead>' do
+            describe '<tr></tr>' do
+              # search in each th of the tr and confirm the correct attribute names exist
+              it 'should have a th with only email' do
+                tr = table_html.find('thead tr')
+                tr.find("th:first-child").should have_content('email')
+              end
+            end
+          end# <thead></thead>
+
+          describe '<tbody></tbody>' do
+            describe '<td></td>' do
+              it 'has a span tag' do
+                td = table_html.find('tbody td')
+
+                td.should have_content 'span'
+              end
+            end
+          end# <tbody></tbody>
+        end# <table></table>
+      end # with columns
     end # with table name
+
+    describe 'pagination links' do
+      
+    end# pagination links
+
   end # TableForPresenter
 end # table_for helper html

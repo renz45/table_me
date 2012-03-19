@@ -9,13 +9,13 @@ require File.expand_path('../../../table_me/table_for_presenter', __FILE__)
   # end
 module TableMe
   module TableForHelper
-    def table_for(model,options = {},&block)
+    def table_for(model,options = {}, &block)
       table_for_presenter = TableForPresenter.new(model,options,&block)
       table_for_presenter.build_table
     end
     
     def highlight_cell value, colors
-       color_value = output_value = color = ''
+      color_value = output_value = color = ''
 
       colors.each do |k,v|
         if v.kind_of? Array

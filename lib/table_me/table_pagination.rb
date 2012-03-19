@@ -1,15 +1,15 @@
 module TableMe
   class TablePagination
-    attr_accessor :params
+    attr_accessor :options
 
-    def initialize table_params
-      self.params = table_params
+    def initialize table_options
+      self.options = table_options
     end
 
     def pagination_info
       <<-HTML.strip_heredoc
         <div class='table-me-pagination-info'>
-          <h3>#{params[:name].split('_').join(' ').titleize}</h3> <p><b>#{params[:page]}</b> of <b>#{params[:page_total]}</b> out of a total <b>#{params[:total_count]}</b></p>
+          <h3>#{options[:name].split('_').join(' ').titleize}</h3> <p><b>#{options[:page]}</b> of <b>#{options[:page_total]}</b> out of a total <b>#{options[:total_count]}</b></p>
         </div>
       HTML
     end
@@ -23,36 +23,34 @@ module TableMe
     end
 
     def next_page_url
-      page = if params[:page] == params[:page_total]
-        params[:page_total]
+      page = if current_page == total_pages
+        total_pages
       else
-        params[:page].to_i + 1
+        current_page + 1
       end
 
       link_for_page page
     end
 
     def prev_page_url
-      page = if params[:page] == 0
+      page = if current_page == 0
         0
       else
-        params[:page].to_i - 1
+        current_page - 1
       end
 
       link_for_page page
     end
 
     def pagination_number_list 
-      html = (0...page_button_count).to_a.map do |n|
+      (0...page_button_count).to_a.map do |n|
         link_number = n + page_number_offset
         number_span(link_number)
       end.join(' ')
-
-      html
     end
 
     def number_span link_number
-      if params[:page].to_s == link_number.to_s
+      if current_page.to_s == link_number.to_s
         <<-HTML.strip_heredoc
           <span class='page current'>#{link_number}</span>
         HTML
@@ -64,26 +62,35 @@ module TableMe
     end
 
     def link_for_page page
-       this_table_url_vars = [params[:name],page,params[:order]].join('%7C')
-       other_tables = params[:other_tables].split('|').join('%7C')
+       this_table_url_vars = [options[:name],page,options[:order]].join('%7C')
+       other_tables = options[:other_tables].split('|').join('%7C')
        "?table_me=#{[other_tables,this_table_url_vars].compact.reject(&:blank?).join(',')}"
     end
 
+    def current_page
+      options[:page].to_i
+    end
+
+    def total_pages
+      options[:page_total]
+    end
+
     def page_number_offset
-      if params[:page].to_i >= params[:page_total] - 2
-        params[:page].to_i - 4 + (params[:page_total] - params[:page].to_i)
-      elsif params[:page].to_i <= 2
+
+      if current_page >= total_pages - 2
+        current_page - 4 + (total_pages - current_page)
+      elsif current_page <= 2
         1
       else
-        params[:page].to_i - 2
+        current_page - 2
       end
     end
 
     def page_button_count
-      if params[:page_total] > 5
+      if total_pages > 5
         5
-      elsif params[:page_total] > 1
-        params[:page_total]
+      elsif total_pages > 1
+        total_pages
       else
         0
       end

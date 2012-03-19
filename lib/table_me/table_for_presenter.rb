@@ -1,33 +1,33 @@
-require File.expand_path('../table_me_presenter', __FILE__)
-require File.expand_path('../table_pagination', __FILE__)
+require_relative 'table_me_presenter'
+require_relative 'table_pagination'
+require_relative 'builder'
+
 module TableMe
   #sample url variable table_me
   #table_me=course|1|created_at,user|2|username
-  class TableForPresenter
+  class TableForPresenter < ActionView::Base
+    include ActionView::Helpers::CaptureHelper
+    include Haml::Helpers if defined?(Haml)
+
     attr_accessor :name, :options
     attr_reader :data
-    # it's easier to delagate the capture and tag helper methods to the view, since there are things
-    # such as haml dependancies that need to be included as well
+
     def initialize table_name, options = {}, &block
       # self.parent = parent
       self.options = options
       self.name = table_name
+      @block = block
+
+      # required to get capture to work with haml
+      init_haml_helpers if defined?(Haml)
+
+      process_data_attributes 
     end
 
-    # delegate :capture, :content_tag, to: :parent
-    # delegate :capture,  to: :parent
-
     def build_table 
-      # @table_block = block
-      # options[:class] ||= ""
-      
-      # get_data_from_controller_for model.to_s.downcase
-
-      # self.params = self.params.merge(options)
-      # new_builder
-      # table_me_wrapper(assemble_table)
       <<-HTML.strip_heredoc.html_safe
-        <div>
+        <div class="table-me-table">
+          #{table_pagination.pagination_info}
           <table>
             <thead>
               <tr>#{create_header}</tr>
@@ -36,12 +36,29 @@ module TableMe
               #{table_rows}
             </tbody>
           </table>
+          #{table_pagination.pagination_controls}
         </div>
       HTML
     end
 
     def data
       TableMePresenter.data[name.to_s]
+    end
+
+    def options
+      TableMePresenter.options[name.to_s]
+    end
+
+
+    private
+
+
+    def table_pagination
+      @table_pagination ||= TablePagination.new(options)
+    end
+
+    def data_class
+      data.first.class
     end
 
     def create_header
@@ -54,112 +71,43 @@ module TableMe
       data.map do |d|
         <<-HTML
           <tr>
-            #{col_names.map {|col| "<td>#{d[col]}</td>"}.join}
+            #{table_column_for(d)}
           </tr>
         HTML
+      end.join.html_safe
+    end
+
+    def table_column_for data
+      table_columns.map do |column|
+        if column.content
+          "<td>#{capture(data, &column.content)}</td>"
+        else
+          "<td>#{data[column.name]}</td>"
+        end
       end.join
     end
 
-    def col_names
-      data.first.attribute_names
+    def table_builder
+      @builder ||= TableMe::Builder.new
     end
-  #   private
-  #   def get_data_from_controller_for model_name
-  #     # @table_data = TableMePresenter.get_data_for model_name
-  #     # self.params = TableMePresenter.get_params_for model_name
-  #     @table_data = TableMePresenter.data[model_name]
-  #     self.params = TableMePresenter.options[model_name]
-  #   end
 
-  #   def new_builder
-  #     @builder = TableMeBuilder.new
-  #   end
+    def col_names
+      table_builder.names
+    end
 
-  #   def table_me_wrapper content
-  #     pagination = TablePagination.new(params)
-  #     content_tag :div, class: "table-me-table #{params[:name]}-table #{params[:class]}" do
-  #       "#{pagination.pagination_info} #{content} #{pagination.pagination_controls}".html_safe
-  #     end
-  #   end
+    def table_columns
+      table_builder.columns
+    end
 
-  #   def assemble_table
-  #     content_tag :table do
-  #       "#{build_table_head} #{build_table_body}".html_safe
-  #     end
-  #   end
+    def process_data_attributes
+      if @block
+        capture(table_builder, &@block)
+      else
+        data.first.attribute_names.each do |attribute|
+          table_builder.column(attribute)
+        end 
+      end
+    end
 
-  #   def build_table_head
-  #     if @table_block
-  #       header = capture(@builder,&@table_block)
-  #     else
-  #       header = @table_data.first.class.attribute_names.map do |name|
-  #         @builder.column(name)
-  #       end.join
-  #     end
-  #     content_tag(:thead, header.html_safe)
-  #   end
-
-  #   def build_table_body
-  #     body = @table_data.map do |data|
-  #       build_row(data)
-  #     end.join("\n")
-
-  #     content_tag(:tbody, body.html_safe)
-  #   end
-
-  #   def build_row item
-  #     content_tag(:tr, class: cycle('even', 'odd')) do
-  #       @builder.names.map do |col_name|
-  #         build_table_data(item, col_name)
-  #       end.join("\n").html_safe
-  #     end
-  #   end
-
-  #   def build_table_data item,col_name
-  #     # NOTE I was getting a weird gsub error when trying to use content_tag here for some reason.
-  #     "<td>#{
-  #       if block = @builder.get_block_for(col_name)
-  #         capture(item, &block)
-  #       else
-  #         item.send(col_name)
-  #       end
-  #     }</td>"
-  #   end
-
-  #   def highlight_cell value, colors
-  #     "<span class='#{colors.key(value).to_s}'>#{value.to_s}</span>".html_safe
-  #   end
-
-  #   def cycle *values
-  #     @values = values if @values.nil? || @values.empty?
-  #     @values.shift
-  #   end
-    
-  #   class TableMeBuilder
-  #     include ActionView::Helpers::TagHelper
-
-  #     def initialize
-  #       @names = []
-  #       @blocks = {}
-  #     end
-
-  #     def column(name, &block)
-  #       @names << name 
-  #       @blocks[name] = block unless block.nil?
-  #       content_tag(:th, name.to_s.split('_').join(' ').titleize)
-  #     end
-
-  #     def get_block_for name
-  #       if @blocks.key?(name)
-  #         @blocks[name]
-  #       else
-  #         false
-  #       end  
-  #     end
-
-  #     def names
-  #       @names
-  #     end
-  #   end
   end
 end

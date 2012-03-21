@@ -37,6 +37,7 @@ module TableMe
       options[:page] = 1
       options[:per_page] ||= 10
       options[:name] ||= model.to_s.downcase
+      options[:order] ||= 'created_at ASC'
       self.name = options[:name]
     end
 
@@ -45,7 +46,8 @@ module TableMe
                                        .offset(start_item)
                                        .order(options[:order])
 
-      options[:page_total] = model.count
+      options[:total_count] = model.count
+      options[:page_total] = (options[:total_count] / options[:per_page].to_f).ceil
     end
 
     def start_item

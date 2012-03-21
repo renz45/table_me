@@ -17,7 +17,7 @@ module TableMe
     def pagination_controls
       <<-HTML.strip_heredoc
         <div class='table-me-pagination-controls'>
-          <a href="#{prev_page_url}">&laquo; Prev</a> #{pagination_number_list} <a href="#{next_page_url}">Next &raquo;</a>
+          <a href="#{prev_page_url}" class='previous'>&laquo; Prev</a> #{pagination_number_list} <a href="#{next_page_url}" class='next'>Next &raquo;</a>
         </div>
       HTML
     end
@@ -49,6 +49,8 @@ module TableMe
       end.join(' ')
     end
 
+    private
+
     def number_span link_number
       if current_page.to_s == link_number.to_s
         <<-HTML.strip_heredoc
@@ -62,7 +64,7 @@ module TableMe
     end
 
     def link_for_page page
-       this_table_url_vars = [options[:name],page,options[:order]].join('%7C')
+       this_table_url_vars = [options[:name],page,options[:order]].compact.reject(&:blank?).join('%7C')
        other_tables = options[:other_tables].split('|').join('%7C')
        "?table_me=#{[other_tables,this_table_url_vars].compact.reject(&:blank?).join(',')}"
     end

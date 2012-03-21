@@ -37,7 +37,8 @@ module TableMe
     def self.parse_table_params_for table_string
       table_params = table_string.split('|')
       table_object = {page: table_params[1]}
-      table_object[:name], table_object[:order] = table_params[0], table_params[2]
+      table_object[:name] = table_params[0]
+      table_object[:order] = table_params[2] || 'created_at ASC'
       table_object[:search] = parse_search_params_from(table_params[3])
       table_object
     end

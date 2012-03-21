@@ -61,8 +61,8 @@ describe "TableMePresenter" do
             presenter.options[:page].should eq 1
           end
 
-          it "contains a key page_total which should be 20" do
-            presenter.options[:page_total].should eq 20
+          it "contains a key page_total which should be 2" do
+            presenter.options[:page_total].should eq 2
           end
         end # "the presenter options"
 

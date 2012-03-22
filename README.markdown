@@ -30,11 +30,12 @@ table_me( User )
 Possible options available for this method are:
 
 `name` - Label for the the table
-
 `per_page` - The amount of items per page of the table
 
 ## View
 In your view you can create the table from the one initialized in the controller, the first parameter of table_for is the name set in table_me. By default the class name is used if a name isn't set.
+
+### Columns
 
 ```ruby
 table_for :user
@@ -64,7 +65,7 @@ table_for :user do |t|
 end
 ```
 
-There is also a color highlighting helper called `highlight_cell`. So lets say that you want to have a visual cue for if a user is an admin:
+There is also a color highlighting helper called `highlight_cell`. So lets say that you want to have a visual que for if a user is an admin:
 
 ![highlight colors](http://cl.ly/3U031f1X1N0I45011K0W/Screen%20Shot%202012-02-23%20at%208.27.31%20AM.png)
 
@@ -90,6 +91,20 @@ table_for :user do |t|
 end
 ```
 
+### Filters
+You can add basic filter fields to the table by using the filter method. Right now, only one filter can be applied and the filters are search fields. I would like to eventually add different types for different types of data. I would like to eventually add in the ability for multiple filter types with a single search button, but the basic form is all I need at the moment. Ajax enabled filtering would be freaking great as well.
+
+Filter usage:
+
+```ruby
+table_for :user do |t|
+  t.filter :username
+  t.column :id
+  t.column :username 
+  t.column :created_at
+end
+```
+
 There is also a light theme, which can be switched by adding a class of 'light' to the table_for:
 
 ```ruby
@@ -100,6 +115,6 @@ This looks a little like this:
 ![table me light table](http://cl.ly/3n410Q2l3C452x1V3Y3R/Screen%20Shot%202012-02-23%20at%209.57.37%20AM.png)
 
 ## Things to add
-* Right now it's setup for column sorting, it just needs the links added to the header to generate the correct urls, I will probably add this later.
 * I would like some sort of scope sorting built in.
-* Some sort of filtering/search per table would be great as well.
+* More advanced filtering other then just search fields. Multiple filters at one time.
+* Ajax filters instead of having to reload the page. The url will still need to be modified so state can be preserved if the url is copy and pasted.

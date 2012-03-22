@@ -27,6 +27,7 @@ module TableMe
     def build_table 
       <<-HTML.strip_heredoc.html_safe
         <div class="table-me-table">
+          #{table_filters}
           #{table_pagination.pagination_info}
           <table>
             <thead>
@@ -53,6 +54,17 @@ module TableMe
     private
 
 
+    def table_filters
+      <<-HTML if table_builder.filters
+        <div class='table-filters'>
+          <h3>Filters</h3>
+          #{table_builder.filters.map do |filter|
+            filter.display
+          end.join("\n")}
+        </div>
+      HTML
+    end
+
     def table_pagination
       @table_pagination ||= TablePagination.new(options)
     end
@@ -77,6 +89,9 @@ module TableMe
       end.join.html_safe
     end
 
+    # it would ne nicer to encapsulate this into the column class, but then we have
+    # to set it up like a view so capture works. For now, I'll leave this here, I'm not
+    # sure if the encapsulation is worth the overhead
     def table_column_for data
       table_columns.map do |column|
         if column.content
@@ -88,7 +103,7 @@ module TableMe
     end
 
     def table_builder
-      @builder ||= TableMe::Builder.new
+      @builder ||= TableMe::Builder.new(options)
     end
 
     def col_names

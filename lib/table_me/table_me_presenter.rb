@@ -42,12 +42,23 @@ module TableMe
     end
 
     def get_data_for model
+
+      model = apply_search_to(model)
+
       @@data[self.name] = @data = model.limit(options[:per_page])
                                        .offset(start_item)
                                        .order(options[:order])
 
       options[:total_count] = model.count
       options[:page_total] = (options[:total_count] / options[:per_page].to_f).ceil
+    end
+
+    def apply_search_to model
+      if options[:search]
+        model.where(model.arel_table[options[:search][:column]].matches("%#{options[:search][:query]}%"))
+      else
+        model
+      end
     end
 
     def start_item

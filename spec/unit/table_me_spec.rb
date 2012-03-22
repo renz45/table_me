@@ -129,7 +129,7 @@ describe "TableMePresenter" do
 
     context "with url params for a single table" do
       context "params[:table_me] = 'user|2|name ASC|email user'" do
-        let(:params) {{table_me: 'user|2|name ASC|email user'}}
+        let(:params) {{table_me: 'user|2|name ASC'}}
         let(:presenter) { TableMe::TableMePresenter.new(User,{}, params) }
 
         describe "presenter.options[:page]" do
@@ -145,6 +145,7 @@ describe "TableMePresenter" do
         end
 
         describe "presenter.options[:search]" do
+          let(:params) {{table_me: 'user|2|name ASC|email user'}}
           let(:search_object) {{column: "email", query: "user"}}
           it 'should return a hash' do
             presenter.options[:search].class.should eq Hash
@@ -301,7 +302,7 @@ describe "TableMePresenter" do
     describe 'Pagination' do
       context 'page 2 with 2 users per page' do
         let(:order) {"name ASC"}
-        let(:params) {{table_me: "user|2|#{order}|email user"}}
+        let(:params) {{table_me: "user|2|#{order}"}}
         let(:presenter) { TableMe::TableMePresenter.new(User, {per_page: 2}, params) }
         let(:user_list) {User.limit(10).order(order)}
 

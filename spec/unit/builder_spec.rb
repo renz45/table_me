@@ -9,9 +9,9 @@ describe TableMe::Builder do
     builder.class.should eq described_class
   end
 
-  describe '.builder_object' do
+  describe '.options' do
     it 'returns the builder_object that was passed into the constructor' do
-      builder.builder_object.should eq object
+      builder.options.should eq object
     end
   end
 

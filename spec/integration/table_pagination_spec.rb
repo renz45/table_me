@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'cgi'
 describe TableMe::TablePagination do
   let(:table_me_presenter) { TableMe::TableMePresenter.new(User) }
   let(:table_me_options) { TableMe::TableMePresenter.options['user'] }
@@ -27,27 +28,27 @@ describe TableMe::TablePagination do
 
     describe 'next link' do
       let(:page) { current_page + 1 }
-      subject { pagination_controls.find('a.next').to_json }
+      subject { CGI::unescape(pagination_controls.find('a.next').to_json) }
 
       it 'should preserve other table states' do
-        table_me_options[:other_tables] = "user_user%7C3%7Ccreated_at%20ASC"
-        should match /.*table_me=user_user%7C3%7Ccreated_at%20ASC,user%7C#{page}%7Ccreated_at[%20\s]ASC.*/
+        table_me_options[:other_tables] = "user_user|3|created_at%20ASC"
+        should match /.*table_me=user_user|3|created_at\sASC,user|#{page}|created_at\sASC.*/
       end
       it 'should generate a link the next page in the string' do
-        should match /.*table_me=.*user%7C#{page}%7Ccreated_at[%20\s]ASC.*/
+        should match /.*table_me=.*user|#{page}|created_at\sASC.*/
       end
     end
 
     describe 'previous link' do
       let(:page) { current_page - 1 }
-      subject { pagination_controls.find('a.previous').to_json }
-      
+      subject { CGI::unescape(pagination_controls.find('a.previous').to_json) }
+
       it 'should preserve other table states' do
-        table_me_options[:other_tables] = "user_user%7C3%7Ccreated_at%20ASC"
-        should match /.*table_me=user_user%7C3%7Ccreated_at%20ASC,user%7C#{page}%7Ccreated_at[%20\s]ASC.*/
+        table_me_options[:other_tables] = "user_user|3|created_at%20ASC"
+        should match /.*table_me=user_user|3|created_at%20ASC,user|#{page}|created_at\sASC.*/
       end
       it 'should generate a link the prev page in the string' do
-        should match /.*table_me=.*user%7C#{page}%7Ccreated_at[%20\s]ASC.*/
+        should match /.*table_me=.*user|#{page}|created_at\sASC.*/
       end
     end
   end

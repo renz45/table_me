@@ -1,3 +1,5 @@
+require 'cgi'
+require_relative 'url_builder'
 module TableMe
   class TablePagination
     attr_accessor :options
@@ -43,7 +45,7 @@ module TableMe
     end
 
     def pagination_number_list 
-      (0...page_button_count).to_a.map do |n|
+      (1...page_button_count).to_a.map do |n|
         link_number = n + page_number_offset
         number_span(link_number)
       end.join(' ')
@@ -64,9 +66,9 @@ module TableMe
     end
 
     def link_for_page page
-       this_table_url_vars = [options[:name],page,options[:order]].compact.reject(&:blank?).join('%7C')
-       other_tables = options[:other_tables].split('|').join('%7C')
-       "?table_me=#{[other_tables,this_table_url_vars].compact.reject(&:blank?).join(',')}"
+      temp_options = options.dup
+      temp_options[:page] = page
+       "?table_me=#{TableMe::UrlBuilder.url_for temp_options}"
     end
 
     def current_page
@@ -78,7 +80,6 @@ module TableMe
     end
 
     def page_number_offset
-
       if current_page >= total_pages - 2
         current_page - 4 + (total_pages - current_page)
       elsif current_page <= 2

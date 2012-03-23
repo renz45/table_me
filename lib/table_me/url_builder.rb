@@ -1,5 +1,4 @@
 require 'cgi'
-require 'spec_helper'
 module TableMe
   class UrlBuilder
     class << self

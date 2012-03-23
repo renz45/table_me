@@ -36,7 +36,7 @@ module TableMe
 
     private
     def table_for_url_var
-      TableMe::UrlBuilder.url_for options
+      TableMe::UrlBuilder.url_vars_for options
     end
   end
 end

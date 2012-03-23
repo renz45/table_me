@@ -3,42 +3,30 @@
 # <table name>|<table page>|<table order>|<table search(optional)>
 # into a table object ment for this current table
 require 'cgi'
+require_relative 'url_builder'
 module TableMe
   class URLParser
     def self.parse_params_for params, name
       @@name = name
-      options = parse_table_me(params)
+      parse_table_me(params)
     end
 
 
     private
     def self.parse_table_me params
+      current_table_object = {}
       if params[:table_me]
-        current_table_object = {}
-
         # split string into table specific strings
         # return the table string to map if it isn't named for the current table
         # we need to do this in order to preserve the options of other tables
+
         table_string_list = CGI::unescape(params[:table_me]).split(',').map do |table_string|
           table_object = parse_table_params_for(table_string)
 
-          if params[:table_me_search_info]
-            info = CGI::unescape(params[:table_me_search_info]).split('|')
-            if table_object[:name] == info[0] && params[:table_me_search]
-              search_query = CGI::unescape(params[:table_me_search])
-
-              #ugly as shit
-              string_arr = table_string.split('|')
-              if string_arr[3]
-                string_arr.pop
-                string_arr << "#{info[1]} #{search_query}"
-                table_string = string_arr.join('|')
-              end
-              
-              table_object[:search] = { column: info[1], query: search_query }
-              # reset the page to one if a new search is made
-              table_object[:page] = 1
-            end
+          if new_table_string = check_for_search(params, table_object)
+            table_string = new_table_string
+            # reset the page to one if a new search is made
+            table_object[:page] = 1
           end
 
           next table_string unless table_object[:name] == self.name
@@ -55,6 +43,22 @@ module TableMe
 
     def self.name
       @@name
+    end
+
+
+    private
+
+
+    def self.check_for_search params, table_object
+      if params[:table_me_search_info]
+        info = CGI::unescape(params[:table_me_search_info]).split('|')
+        if table_object[:name] == info[0] && params[:table_me_search]
+          #set the new search column and query
+          table_object[:search] = { column: info[1], query: CGI::unescape(params[:table_me_search]) }
+          # rebuild the url string so it can be returned to the map
+          TableMe::UrlBuilder.url_vars_for table_object
+        end
+      end
     end
 
     # parse the table specific string into a table hash

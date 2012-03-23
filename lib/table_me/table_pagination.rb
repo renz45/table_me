@@ -66,9 +66,7 @@ module TableMe
     end
 
     def link_for_page page
-      temp_options = options.dup
-      temp_options[:page] = page
-       "?table_me=#{TableMe::UrlBuilder.url_for temp_options}"
+      TableMe::UrlBuilder.table_me_url_for options, page: page
     end
 
     def current_page

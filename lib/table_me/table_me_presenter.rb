@@ -1,4 +1,4 @@
-require File.expand_path('../url_parser', __FILE__)
+require_relative 'url_parser'
 module TableMe
   #sample url variable table_me
   #table_me=course|1|created_at,user|2|username

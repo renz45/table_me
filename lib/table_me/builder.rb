@@ -24,5 +24,9 @@ module TableMe
       TableMe::Filter.filters_for options[:name]
     end
 
+    def clear_filter
+      # TODO this seems a bit hacky to me, Will want to rework this at some point
+      filters.last.display_clear
+    end
   end
 end

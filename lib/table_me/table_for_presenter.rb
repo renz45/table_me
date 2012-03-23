@@ -26,18 +26,20 @@ module TableMe
 
     def build_table 
       <<-HTML.strip_heredoc.html_safe
-        <div class="table-me-table">
+        <div class='table-me'>
           #{table_filters}
-          #{table_pagination.pagination_info}
-          <table>
-            <thead>
-              <tr>#{create_header}</tr>
-            </thead>
-            <tbody>
-              #{table_rows}
-            </tbody>
-          </table>
-          #{table_pagination.pagination_controls}
+          <div class="table-me-table">
+            #{table_pagination.pagination_info}
+            <table>
+              <thead>
+                <tr>#{create_header}</tr>
+              </thead>
+              <tbody>
+                #{table_rows}
+              </tbody>
+            </table>
+            #{table_pagination.pagination_controls}
+          </div>
         </div>
       HTML
     end
@@ -61,6 +63,7 @@ module TableMe
           #{table_builder.filters.map do |filter|
             filter.display
           end.join("\n")}
+          #{table_builder.clear_filter}
         </div>
       HTML
     end

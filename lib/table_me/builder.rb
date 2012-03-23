@@ -13,7 +13,6 @@ module TableMe
     def column name, &block
       @columns << TableMe::Column.new(name, &block)
       @names << name
-      nil #return nil so we don't get html output from the block (this is dumb, I'll fix this later)
     end
 
     def filter name

@@ -98,12 +98,15 @@ Filter usage:
 
 ```ruby
 table_for :user do |t|
-  t.filter :username
+  t.filter :email
+  t.filter :name
   t.column :id
-  t.column :username 
-  t.column :created_at
+  t.column :email 
+  t.column :name
 end
 ```
+
+![table filter](http://cl.ly/0B1U1c2Z0O2w1o3j3o3C/Screen%20Shot%202012-03-23%20at%201.52.48%20PM.png)
 
 There is also a light theme, which can be switched by adding a class of 'light' to the table_for:
 
@@ -117,4 +120,4 @@ This looks a little like this:
 ## Things to add
 * I would like some sort of scope sorting built in.
 * More advanced filtering other then just search fields. Multiple filters at one time.
-* Ajax filters instead of having to reload the page. The url will still need to be modified so state can be preserved if the url is copy and pasted.git 
+* Ajax filters instead of having to reload the page. The url will still need to be modified so state can be preserved if the url is copy and pasted.

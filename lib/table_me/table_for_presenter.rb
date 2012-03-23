@@ -1,6 +1,7 @@
 require_relative 'table_me_presenter'
 require_relative 'table_pagination'
 require_relative 'builder'
+require_relative 'url_builder'
 
 module TableMe
   #sample url variable table_me
@@ -77,8 +78,16 @@ module TableMe
     end
 
     def create_header
+      order = options[:order].split(' ')
       col_names.map do |name|
-        "<th>#{name}</th>"
+        if order[0] == name.to_s
+          url = TableMe::UrlBuilder.table_me_url_for(options, order: "#{name.to_s} #{order[1].downcase == 'asc' ? 'desc' : 'asc'}")
+          klass = order[1]
+        else
+          url = TableMe::UrlBuilder.table_me_url_for(options, order: "#{name.to_s} asc")
+          klass = nil
+        end
+        "<th><a #{"class='#{klass}'" if klass} href='#{url}'>#{name.to_s.split('_').join(' ').titleize}</a></th>"
       end.join.html_safe
     end
 

@@ -14,8 +14,7 @@ module TableMe
       end
 
       def table_me_url_for options, additional_options = {}
-        options.merge! additional_options
-        "?table_me=#{url_vars_for options}"
+        "?table_me=#{url_vars_for options, additional_options}"
       end
 
       private

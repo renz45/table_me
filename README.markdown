@@ -117,4 +117,4 @@ This looks a little like this:
 ## Things to add
 * I would like some sort of scope sorting built in.
 * More advanced filtering other then just search fields. Multiple filters at one time.
-* Ajax filters instead of having to reload the page. The url will still need to be modified so state can be preserved if the url is copy and pasted.
+* Ajax filters instead of having to reload the page. The url will still need to be modified so state can be preserved if the url is copy and pasted.git 

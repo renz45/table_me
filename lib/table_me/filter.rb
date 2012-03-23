@@ -31,7 +31,7 @@ module TableMe
     end
 
     def display_clear
-      <<-HTML.strip_heredoc
+      <<-HTML.strip_heredoc if options[:search]
         <form method='get' action="?">
           <input type='hidden' name='table_me_search' value=""/>
           <input type='hidden' name='table_me_search_info' value="#{options[:name]}%7C#{options[:search][:column]}" />

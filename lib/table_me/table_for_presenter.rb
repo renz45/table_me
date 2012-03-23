@@ -5,7 +5,7 @@ require_relative 'url_builder'
 
 module TableMe
   #sample url variable table_me
-  #table_me=course|1|created_at,user|2|username
+  #table_me=course|1|created_at|name some,user|2|username
   class TableForPresenter < ActionView::Base
     include ActionView::Helpers::CaptureHelper
     include Haml::Helpers if defined?(Haml)

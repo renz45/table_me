@@ -21,21 +21,40 @@ module TableMe
       <<-HTML.strip_heredoc
         <form method='get' action="?">
           <label for='search'>#{column_name.to_s.split('_').join(" ").titleize}</label>
-          <input type='text' name='table_me_search' value="#{initial_value}"/>
-          <input type='hidden' name='table_me_search_info' value="#{options[:name]}%7C#{column_name}" />
-          <input type='hidden' name='table_me' value="#{table_for_url_var}" />
+          <input type='text' name="tm_#{options[:name]}[search][query]" value="#{initial_value}"/>
+          <input type='hidden' name="tm_#{options[:name]}[search][column]" value="#{column_name}"/>
+          <input type='hidden' name="tm_#{options[:name]}[new_search]" value="true"/>
+          #{create_other_fields options}
           <input id='search' type='submit' value='Search' />
         </form>
       HTML
 
     end
 
+    def create_other_fields options
+      inputs = []
+      TableMe::UrlBuilder.filter_options(options).each do |option|
+        option.each do |k,v|
+          if k.to_s == 'search'
+            # Adon't add the search fields if they are the current table
+            unless option[:name] == options[:name]
+              inputs << "<input type='hidden' name='tm_#{option[:name]}[search][query]' value='#{v[:query]}'/>"
+              inputs << "<input type='hidden' name='tm_#{option[:name]}[search][column]' value='#{v[:column]}'/>"
+            end
+          else
+            inputs << "<input type='hidden' name='tm_#{option[:name]}[#{k.to_s}]' value='#{v}'/>"
+          end
+        end
+      end
+      inputs.join("\n")
+    end
+
     def display_clear
       <<-HTML.strip_heredoc if options[:search]
         <form method='get' action="?">
-          <input type='hidden' name='table_me_search' value=""/>
-          <input type='hidden' name='table_me_search_info' value="#{options[:name]}%7C#{options[:search][:column]}" />
-          <input type='hidden' name='table_me' value="#{table_for_url_var}" />
+          <input type='hidden' name="tm_#{options[:name]}[search][query]" value=""/>
+          <input type='hidden' name="tm_#{options[:name]}[search][column]" value="#{column_name}"/>
+          #{create_other_fields options}
           <input id='search' type='submit' value='Clear Filter' />
         </form>
       HTML
@@ -46,8 +65,8 @@ module TableMe
     end
 
     private
-    def table_for_url_var
-      TableMe::UrlBuilder.url_vars_for options
+    def url_for_tables options
+      TableMe::UrlBuilder.url_for options
     end
   end
 end

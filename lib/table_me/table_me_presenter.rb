@@ -20,13 +20,12 @@ module TableMe
     @@options = {}
     
     def initialize model, options = {}, params = {}
-      @options = options
+      @options = ActiveSupport::HashWithIndifferentAccess.new(options)
 
       set_defaults_for model
       parse_params_for params
       get_data_for model
-
-      @@options[self.name] = options
+      @@options[self.name] = @options
     end
 
     def parse_params_for params
@@ -55,6 +54,10 @@ module TableMe
 
     def apply_search_to model
       if options[:search]
+        if options[:new_search]
+          options[:page] = 1
+          options.delete(:new_search)
+        end
         model.where(model.arel_table[options[:search][:column]].matches("%#{options[:search][:query]}%"))
       else
         model
@@ -62,7 +65,7 @@ module TableMe
     end
 
     def start_item
-      (options[:page].to_i - 1) * options[:per_page]
+      (options[:page].to_i - 1) * options[:per_page].to_i
     end
 
     def name= value

@@ -81,10 +81,10 @@ module TableMe
       order = options[:order].split(' ')
       col_names.map do |name|
         if order[0] == name.to_s
-          url = TableMe::UrlBuilder.table_me_url_for(options, order: "#{name.to_s} #{order[1].downcase == 'asc' ? 'desc' : 'asc'}")
+          url = TableMe::UrlBuilder.url_for(options, order: "#{name.to_s} #{order[1].downcase == 'asc' ? 'desc' : 'asc'}")
           klass = order[1]
         else
-          url = TableMe::UrlBuilder.table_me_url_for(options, order: "#{name.to_s} asc")
+          url = TableMe::UrlBuilder.url_for(options, order: "#{name.to_s} asc")
           klass = nil
         end
         "<th><a #{"class='#{klass}'" if klass} href='#{url}'>#{name.to_s.split('_').join(' ').titleize}</a></th>"

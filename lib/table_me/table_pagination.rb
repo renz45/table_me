@@ -45,7 +45,7 @@ module TableMe
     end
 
     def pagination_number_list 
-      (1...page_button_count).to_a.map do |n|
+      (0...page_button_count).to_a.map do |n|
         link_number = n + page_number_offset
         number_span(link_number)
       end.join(' ')
@@ -66,7 +66,7 @@ module TableMe
     end
 
     def link_for_page page
-      TableMe::UrlBuilder.table_me_url_for options, page: page
+      TableMe::UrlBuilder.url_for options, page: page
     end
 
     def current_page

@@ -4,7 +4,7 @@ require_relative '../../lib/table_me/filter'
 describe TableMe::Filter do
   let(:options) do
     {
-      other_tables: "user_user%7C3%7Ccreated_at%20ASC",
+      other_tables: [{page:1, name: 'user_user', order: 'created_at ASC'}],
       page: 1,
       name: 'user',
       order: 'created_at ASC',

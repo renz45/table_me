@@ -53,7 +53,7 @@ describe 'table_for helper html' do
               tr = table_html.find('thead tr')
               data_attribute_names = table_me_data.first.attribute_names
               data_attribute_names.length.times do |n|
-                tr.find("th:nth-child(#{n+1})").should have_content(data_attribute_names[n])
+                tr.find("th:nth-child(#{n+1})").should have_content(data_attribute_names[n].split('_').join(' ').titleize)
               end
             end
           end # <tr></tr>
@@ -103,7 +103,7 @@ describe 'table_for helper html' do
                 tr = table_html.find('thead tr')
                 data_attribute_names = table_me_data.first.attribute_names
                 data_attribute_names.length.times do |n|
-                  tr.find("th:nth-child(#{n+1})").should have_content(data_attribute_names[n])
+                  tr.find("th:nth-child(#{n+1})").should have_content(data_attribute_names[n].split('_').join(' ').titleize)
                 end
               end
             end
@@ -142,7 +142,7 @@ describe 'table_for helper html' do
               # search in each th of the tr and confirm the correct attribute names exist
               it 'should have a th with only email' do
                 tr = table_html.find('thead tr')
-                tr.find("th:first-child").should have_content('email')
+                tr.find("th:first-child").should have_content('Email')
               end
             end
           end# <thead></thead>

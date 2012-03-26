@@ -15,10 +15,4 @@ describe TableMe::Builder do
     end
   end
 
-  describe '.column' do
-    it 'requires a column name and optional block' do
-      builder.stub!(:column)
-    end
-  end
-
 end

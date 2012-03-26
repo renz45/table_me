@@ -129,7 +129,13 @@ describe "TableMePresenter" do
 
     context "with url params for a single table" do
       context "params[:table_me] = 'user|2|name ASC|email user'" do
-        let(:params) {{table_me: 'user|2|name ASC'}}
+        let(:params) do 
+          {'tm_users'=>
+            {page: '2',
+            name: 'user',
+            order: 'name ASC'}
+          }
+        end
         let(:presenter) { TableMe::TableMePresenter.new(User,{}, params) }
 
         describe "presenter.options[:page]" do
@@ -145,10 +151,19 @@ describe "TableMePresenter" do
         end
 
         describe "presenter.options[:search]" do
-          let(:params) {{table_me: 'user|2|name ASC|email user'}}
-          let(:search_object) {{column: "email", query: "user"}}
+          let(:search_object) {{'column' => "email", 'query' => "user"}}
+          let(:params) do 
+            {'tm_users'=>
+              {page: '2',
+              name: 'user',
+              order: 'name ASC',
+              search: search_object,
+              new_search: true}
+            }
+          end
+          
           it 'should return a hash' do
-            presenter.options[:search].class.should eq Hash
+            presenter.options[:search].class.should eq ActiveSupport::HashWithIndifferentAccess
           end
 
           it 'should equal {column: "email", query: "user"}' do
@@ -189,71 +204,51 @@ describe "TableMePresenter" do
             end
           end
         end
-      end # "params[:table_me] = 'user|2|name ASC|email user'"
-
-      context 'missing the query params' do
-        context "params[:table_me] = 'user|2|name ASC'" do
-          let(:params) {{table_me: 'user|2|name ASC'}}
-          let(:presenter) { TableMe::TableMePresenter.new(User,{}, params) }
-          let(:empty_hash) {{}}
-
-          describe "presenter.options[:search]" do
-            let(:search_object) {{column: "email", query: "user"}}
-            it 'should return an empty hash' do
-              presenter.options[:search].nil?.should eq true
-            end
-          end
-
-        end # "params[:table_me] = 'user|2|name ASC|email user'"
-      end # 'missing the query param'
+      end 
 
     end # "with url params for a single table"
 
     context "with url params for multiple tables" do
 
-      context "params[:table_me] = 'user_one|1|name ASC|email user,
-                                    user_two|2|email ASC|name user,
-                                    user_three|3|created_at DESC|email user'" do
-        let(:params) {{table_me: 'user_one|1|name ASC|email user,user_two|2|email ASC|name user,user_three|3|created_at DESC|email user'}}
-        let(:presenter) { TableMe::TableMePresenter.new(User,{name: 'user_two'}, params) }
+      context "tm_user and user_two" do
+        let(:order) {'created_at ASC'}
+        let(:name) {'user_two'}
+        let(:page) {'3'}
 
+        let(:params_multi_tables) do
+          params = {'tm_user'=>
+                    {'page' => '2',
+                    'name' => 'user',
+                    'order' => 'name ASC'}
+                  }
 
+          params[:tm_user_user] = {page: page,
+                                  name: name,
+                                  order: order}
+          params
+        end
+        let(:presenter) { TableMe::TableMePresenter.new(User,{name: 'user_two'}, params_multi_tables) }
 
         describe "presenter.options[:page]" do
-          it 'should equal 2' do
-            presenter.options[:page].should eq '2'
+          it 'should be correct' do
+            presenter.options[:page].should eq page
           end
         end
 
         describe "presenter.options[:order]" do
-          it 'should equal "email ASC"' do
-            presenter.options[:order].should eq 'email ASC'
+          it 'should be correct' do
+            presenter.options[:order].should eq order
           end
         end
 
-        describe "presenter.options[:search]" do
-          let(:search_object) {{column: "name", query: "user"}}
-          it 'should return a hash' do
-            presenter.options[:search].class.should eq Hash
-          end
-
-          it 'should equal {column: "name", query: "user"}' do
-            presenter.options[:search].should eq search_object
-          end
-
-        end
-
-        context 'should preserve params[:table_me] for other tables' do
-          describe 'presenter.options[:other_tables]' do
-
-            it 'should equal "user_one|1|name ASC|email user,user_three|3|created_at DESC|email user"' do
-              presenter.options[:other_tables].should eq "user_one|1|name ASC|email user,user_three|3|created_at DESC|email user"
-            end
+        describe 'presenter.options[:other_tables]' do
+          it 'should preserve other tables' do
+            presenter.options[:other_tables].should eq [params_multi_tables['tm_user']]
           end
         end
 
         describe "get data out of class via class variables" do
-          let(:presenter2) { TableMe::TableMePresenter.new(User,{name: 'user_three'}, params) }
+          let(:presenter2) { TableMe::TableMePresenter.new(User,{name: 'user_three'}, params_multi_tables) }
           before(:each) {
             presenter
             presenter2
@@ -302,7 +297,13 @@ describe "TableMePresenter" do
     describe 'Pagination' do
       context 'page 2 with 2 users per page' do
         let(:order) {"name ASC"}
-        let(:params) {{table_me: "user|2|#{order}"}}
+        let(:params) do
+          {'tm_user'=>
+            {page: '2',
+            name: 'user',
+            order: 'name ASC'}
+          }
+        end
         let(:presenter) { TableMe::TableMePresenter.new(User, {per_page: 2}, params) }
         let(:user_list) {User.limit(10).order(order)}
 

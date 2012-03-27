@@ -58,7 +58,14 @@ module TableMe
           options[:page] = 1
           options.delete(:new_search)
         end
-        model.where(model.arel_table[options[:search][:column]].matches("%#{options[:search][:query]}%"))
+
+        column_hash = model.columns_hash || model.class.columns_hash
+
+        if column_hash[options[:search][:column].to_s].sql_type.include?('char')
+          model.where(model.arel_table[options[:search][:column]].matches("%#{options[:search][:query]}%"))
+        else
+          model.where(options[:search][:column].to_sym => options[:search][:query])
+        end
       else
         model
       end

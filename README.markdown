@@ -134,3 +134,4 @@ This looks a little like this:
 * More advanced filtering other then just search fields. Multiple filters at one time.
 * Ajax filters instead of having to reload the page. The url will still need to be modified so state can be preserved if the url is copy and pasted.
 * The way queries are handled with the filter search is sloppy, it needs to be refactored.
+* Tests need to be refactored pretty badly.

@@ -1,8 +1,7 @@
 .table-me
   display: inline-block
-
-.table-me-table
   font-size: 1.2em
+.table-me-table
   color: #eee
   display: inline-block
   float: left
@@ -20,6 +19,7 @@
       border-bottom: 1px solid #000
       border-right: 1px solid #000
       color: #fff
+      height: 25px
       background: #444 /* Old browsers */
       background: -moz-linear-gradient(top,  #444 0%, #212121 99%) /* FF3.6+ */
       background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#444), color-stop(99%,#212121)) /* Chrome,Safari4+ */
@@ -31,6 +31,7 @@
       a
         padding: 8px 8px 8px 16px
         color: #fff
+        vertical-align: center
         background: image-url('table_me/orderable.png') 5px 15px no-repeat
       a:visited
         color: #fff
@@ -103,9 +104,11 @@
   h3
     margin: 0 0 10px 0
     padding: 0
-    font-size: 1.3em
+    font-size: 1em
   form
     margin-bottom: 10px
+  form:last-child
+    margin: 0
   input
     width: auto
     padding: 5px

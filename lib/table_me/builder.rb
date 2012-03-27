@@ -10,8 +10,8 @@ module TableMe
       @names = []
     end
 
-    def column name, &block
-      @columns << TableMe::Column.new(name, &block)
+    def column name,options = {}, &block
+      @columns << TableMe::Column.new(name,options, &block)
       @names << name
     end
 

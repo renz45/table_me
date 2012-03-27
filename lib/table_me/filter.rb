@@ -52,8 +52,6 @@ module TableMe
     def display_clear
       <<-HTML.strip_heredoc if options[:search]
         <form method='get' action="?">
-          <input type='hidden' name="tm_#{options[:name]}[search][query]" value=""/>
-          <input type='hidden' name="tm_#{options[:name]}[search][column]" value="#{column_name}"/>
           #{create_other_fields options}
           <input id='search' type='submit' value='Clear Filter' />
         </form>

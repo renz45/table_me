@@ -29,7 +29,7 @@ module TableMe
       <<-HTML.strip_heredoc.html_safe
         <div class='table-me'>
           #{table_filters}
-          <div class="table-me-table">
+          <div class="table-me-table #{'with-filters' if table_builder.filters}">
             #{table_pagination.pagination_info}
             <table>
               <thead>
@@ -79,15 +79,19 @@ module TableMe
 
     def create_header
       order = options[:order].split(' ')
-      col_names.map do |name|
-        if order[0] == name.to_s
-          url = TableMe::UrlBuilder.url_for(options, order: "#{name.to_s} #{order[1].downcase == 'asc' ? 'desc' : 'asc'}")
-          klass = order[1]
+      table_columns.map do |column|
+        if column.sortable
+          if order[0] == column.sortable.to_s
+            url = TableMe::UrlBuilder.url_for(options, order: "#{column.sortable.to_s} #{order[1].downcase == 'asc' ? 'desc' : 'asc'}")
+            klass = order[1]
+          else
+            url = TableMe::UrlBuilder.url_for(options, order: "#{column.sortable.to_s} asc")
+            klass = nil
+          end
+          "<th><a #{"class='#{klass}'" if klass} href='#{url}'>#{column.name.to_s.split('_').join(' ').titleize}</a></th>"
         else
-          url = TableMe::UrlBuilder.url_for(options, order: "#{name.to_s} asc")
-          klass = nil
+          "<th>#{column.name.to_s.split('_').join(' ').titleize}</th>"
         end
-        "<th><a #{"class='#{klass}'" if klass} href='#{url}'>#{name.to_s.split('_').join(' ').titleize}</a></th>"
       end.join.html_safe
     end
 
@@ -129,11 +133,18 @@ module TableMe
     def process_data_attributes
       if @block
         capture(table_builder, &@block)
+        if table_builder.columns.empty?
+          build_all_columns
+        end
       else
-        data.first.attribute_names.each do |attribute|
-          table_builder.column(attribute)
-        end 
+        build_all_columns
       end
+    end
+
+    def build_all_columns
+      data.first.attribute_names.each do |attribute|
+        table_builder.column(attribute)
+      end 
     end
 
   end

@@ -65,6 +65,18 @@ table_for :user do |t|
 end
 ```
 
+Now, when a block is used to alter the content of a column, the sorting is lost, since the table can no longer assume what is in the column. You need to set a `sort_on` param to tell the column what to sort by. For example: 
+
+```ruby
+table_for :user do |t|
+  t.column :id
+  t.column :email, sort_on: :email do |c|
+    "<h1>c.email</h1>"
+  end
+  t.column :created_at
+end
+```
+
 There is also a color highlighting helper called `highlight_cell`. So lets say that you want to have a visual que for if a user is an admin:
 
 ![highlight colors](http://cl.ly/3U031f1X1N0I45011K0W/Screen%20Shot%202012-02-23%20at%208.27.31%20AM.png)

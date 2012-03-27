@@ -4,8 +4,66 @@ require_relative 'builder'
 require_relative 'url_builder'
 
 module TableMe
-  #sample url variable table_me
-  #table_me=course|1|created_at|name some,user|2|username
+
+  # the first parameter of table_for is the name set in table_me. By default the class 
+  # name is used if a name isn't set.
+
+  # table_for :user
+  # Now, this will list all columns from the database in your table, which you 
+  # may not always want to do. You can pass a block of columns to be more specific:
+
+  # table_for :user do |t|
+  #   t.column :id
+  #   t.column :email
+  #   t.column :created_at
+  # end
+
+  # This will give you a user table with the columns id, email, and created_at.
+
+  # What if you want to customize the output of the column? Each column can also 
+  # take a block of content:
+
+  # table_for :user do |t|
+  #   t.column :id
+  #   t.column :email do |c|
+  #     "<h1>c.email</h1>"
+  #   end
+  #   t.column :created_at
+  # end
+
+  # Now, when a block is used to alter the content of a column, the sorting is lost, 
+  # since the table can no longer assume what is in the column. You need to set a sort_on 
+  # param to tell the column what to sort by. For example:
+
+  # table_for :user do |t|
+  #   t.column :id
+  #   t.column :email, sort_on: :email do |c|
+  #     "<h1>c.email</h1>"
+  #   end
+  #   t.column :created_at
+  # end
+
+  # Filters
+  # You can add basic filter fields to the table by using the filter method. Right now, 
+  # only one filter can be applied and the filters are search fields. I would like to 
+  # eventually add different types for different types of data. I would like to eventually 
+  # add in the ability for multiple filter types with a single search button, but the basic 
+  # form is all I need at the moment. Ajax enabled filtering would be freaking great as well.
+
+  # Filter usage:
+
+  # table_for :user do |t|
+  #   t.filter :email
+  #   t.filter :name
+  #   t.column :id
+  #   t.column :email 
+  #   t.column :name
+  # end
+
+  # The build_table method will use the other public methods to build a full table. It's 
+  # possible to construct your own build table method if you want a custom layout.
+
+
   class TableForPresenter < ActionView::Base
     include ActionView::Helpers::CaptureHelper
     include Haml::Helpers if defined?(Haml)
@@ -24,6 +82,8 @@ module TableMe
 
       process_data_attributes 
     end
+
+    # build the complete table with pagination and filters if set.
 
     def build_table 
       <<-HTML.strip_heredoc.html_safe
@@ -45,10 +105,17 @@ module TableMe
       HTML
     end
 
+    # get data from the table_me_presenter in the controller. This breaks encapsulation and makes
+    # this class too tightly coupled to the TableMePresenter, I wanted to keep the table data out
+    # of the class variables in the controller and view, but there has to be a better way to do it.
+    # TODO decouple this and options below
     def data
       TableMePresenter.data[name.to_s]
     end
 
+
+    # same as data above, only with table options. Ideally this needs to be a value object instead
+    # of just a hash. TODO use a value object instead of a hash, see table_vo.rb
     def options
       TableMePresenter.options[name.to_s]
     end
@@ -57,6 +124,7 @@ module TableMe
     private
 
 
+    # create table filters if they exist
     def table_filters
       <<-HTML if table_builder.filters
         <div class='table-filters'>
@@ -69,14 +137,17 @@ module TableMe
       HTML
     end
 
+    # create a table pagination object
     def table_pagination
       @table_pagination ||= TablePagination.new(options)
     end
 
+    # find the class of the data passed in 
     def data_class
       data.first.class
     end
 
+    # create the sortable headers from columns given
     def create_header
       order = options[:order].split(' ')
       table_columns.map do |column|
@@ -95,6 +166,7 @@ module TableMe
       end.join.html_safe
     end
 
+    # create table rows based on data for each row using columns as a template
     def table_rows
       data.map do |d|
         <<-HTML
@@ -118,18 +190,23 @@ module TableMe
       end.join
     end
 
+    # create a table builder instance
     def table_builder
       @builder ||= TableMe::Builder.new(options)
     end
 
+    # get column names from the table_builder
     def col_names
       table_builder.names
     end
 
+    # get table columns from the table_builder
     def table_columns
       table_builder.columns
     end
 
+    # pass in the block given to the table_for_presenter if it exists
+    # else just create a column for every column in the data object
     def process_data_attributes
       if @block
         capture(table_builder, &@block)
@@ -141,6 +218,7 @@ module TableMe
       end
     end
 
+    # create a column for every column in the data object
     def build_all_columns
       data.first.attribute_names.each do |attribute|
         table_builder.column(attribute)

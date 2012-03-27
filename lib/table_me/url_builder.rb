@@ -1,5 +1,8 @@
 require 'cgi'
 module TableMe
+
+  # This class builds the url needed for the tables based on the table options.
+  # Some options are filtered out to make the url as short as possible. 
   class UrlBuilder
     class << self
 
@@ -13,6 +16,9 @@ module TableMe
           "?#{url.join('&')}"
       end
 
+      # Filter out all options except name page search and order
+      # We need to dup the objects so we don't alter the options
+      # object through out the table_me module
       def filter_options options
         other_tables = options[:other_tables].dup || []
         temp_options = options.dup

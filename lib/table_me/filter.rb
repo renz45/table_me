@@ -1,5 +1,9 @@
 require_relative 'url_builder'
 module TableMe
+  # This class creates the filter forms for searching a table.
+  # Unlike the column class, the filter class is responsible
+  # for creating it's own view. See the table_for_helper file
+  # for documentation on how to use filters
   class Filter
     attr_accessor :options, :column_name
     
@@ -16,6 +20,7 @@ module TableMe
       @@filters[options[:name]] << self 
     end
 
+    # Display the filter form
     def display
       initial_value = options[:search] && options[:search][:column] == column_name.to_s ? options[:search][:query] : ''
       <<-HTML.strip_heredoc
@@ -30,6 +35,26 @@ module TableMe
       HTML
 
     end
+
+    # display a clear filters button, this clears the filters if any are active.
+    # This could/should be just a link styled like a button, there really isn't a
+    # need for it to be a form
+    # TODO Change this into a link instead of a form
+    def display_clear
+      <<-HTML.strip_heredoc if options[:search]
+        <form method='get' action="?">
+          #{create_other_fields options}
+          <input id='search' type='submit' value='Clear Filter' />
+        </form>
+      HTML
+    end
+
+    # getter for all the filters
+    def self.filters_for table_name
+      @@filters[table_name]
+    end
+
+    private
 
     def create_other_fields options
       inputs = []
@@ -49,20 +74,6 @@ module TableMe
       inputs.join("\n")
     end
 
-    def display_clear
-      <<-HTML.strip_heredoc if options[:search]
-        <form method='get' action="?">
-          #{create_other_fields options}
-          <input id='search' type='submit' value='Clear Filter' />
-        </form>
-      HTML
-    end
-
-    def self.filters_for table_name
-      @@filters[table_name]
-    end
-
-    private
     def url_for_tables options
       TableMe::UrlBuilder.url_for options
     end

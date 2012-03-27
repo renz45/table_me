@@ -1,6 +1,8 @@
 require 'cgi'
 require_relative 'url_builder'
 module TableMe
+
+  # This handles the pagination elements of the table
   class TablePagination
     attr_accessor :options
 
@@ -8,6 +10,8 @@ module TableMe
       self.options = table_options
     end
 
+    # Information at the top of the table displaying the table name and 
+    # position page/item wise out of a total.
     def pagination_info
       <<-HTML.strip_heredoc
         <div class='table-me-pagination-info'>
@@ -16,6 +20,10 @@ module TableMe
       HTML
     end
 
+    # Adds controls at the bottom of the table for previous and next and a 5 number range
+    # TODO Refactor so controllers are hidden when pages on unavailable. IE, if your on page 1
+    # you shouldn't be able to see a previous button, or if your on the last page you shouldn't
+    # be able to see the next button
     def pagination_controls
       <<-HTML.strip_heredoc
         <div class='table-me-pagination-controls'>
@@ -44,6 +52,7 @@ module TableMe
       link_for_page page
     end
 
+    # List of number links for the number range between next and previous
     def pagination_number_list 
       (0...page_button_count).to_a.map do |n|
         link_number = n + page_number_offset

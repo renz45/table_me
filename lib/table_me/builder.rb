@@ -1,6 +1,9 @@
 require_relative 'column'
 require_relative 'filter'
 module TableMe
+  # This class is responsible for building the various elements of the 
+  # table through a blog passed into the table_for_presenter
+
   class Builder
     attr_accessor :options
     attr_reader :columns, :names, :filters
@@ -10,11 +13,13 @@ module TableMe
       @names = []
     end
 
+    # Define a column
     def column name,options = {}, &block
       @columns << TableMe::Column.new(name,options, &block)
       @names << name
     end
 
+    #define a filter
     def filter name
       TableMe::Filter.new(options, name)
     end

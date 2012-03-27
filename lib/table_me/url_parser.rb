@@ -1,10 +1,9 @@
-
-# parses a url variable 'table_me'/params[:table_me] with the format of:
-# <table name>|<table page>|<table order>|<table search(optional)>
-# into a table object ment for this current table
 require 'cgi'
 require_relative 'url_builder'
 module TableMe
+  # Parse the url params into the hash needed for table_me to work. Take the tables
+  # which aren't the current one and save them as other_tables so we can persist
+  # their states in links.
   class URLParser
     def self.parse_params_for params, name
       @@name = name

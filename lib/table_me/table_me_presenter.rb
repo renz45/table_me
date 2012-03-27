@@ -1,7 +1,20 @@
 require_relative 'url_parser'
 module TableMe
-  #sample url variable table_me
-  #table_me=course|1|created_at,user|2|username
+
+  # table_me(collection, options)
+  # The collection can be two things, first an ActiveRecord::Relation, which 
+  # is the result of some sort of active record query ex:
+
+  # table_me( User.where(subscribed: true) )
+  # Keep in mind that doing User.all just returns an array of objects, not the a relation.
+
+  # In order to do the equivalent of the .all just pass in the ActiveRecord class:
+
+  # table_me( User )
+  # Possible options available for this method are:
+
+  # name - Label for the the table
+  # per_page - The amount of items per page of the table
   class TableMePresenter
     attr_accessor :params, :name
     attr_reader :data, :options
@@ -20,6 +33,9 @@ module TableMe
     @@options = {}
     
     def initialize model, options = {}, params = {}
+      # this was more of a patch for the code. I need to go back through and normalize all
+      # the hash access so a normal has can be used with confidence
+      # TODO normalize hash access to strings or symbols
       @options = ActiveSupport::HashWithIndifferentAccess.new(options)
 
       set_defaults_for model
@@ -28,10 +44,12 @@ module TableMe
       @@options[self.name] = @options
     end
 
+    # parse the params into an options hash that we can use
     def parse_params_for params
       options.merge! URLParser.parse_params_for(params, self.name)
     end
 
+    # set defaults for options
     def set_defaults_for model
       options[:page] = 1
       options[:per_page] ||= 10
@@ -40,8 +58,8 @@ module TableMe
       self.name = options[:name]
     end
 
+    # make the model queries to pull back the data based on pagination and search results if given
     def get_data_for model
-
       model = apply_search_to(model)
 
       @@data[self.name] = @data = model.limit(options[:per_page])
@@ -52,6 +70,10 @@ module TableMe
       options[:page_total] = (options[:total_count] / options[:per_page].to_f).ceil
     end
 
+    # Apply the search query to the appropriate table columns. This is sort of ugly at the moment
+    # and not as reliable as it could be. It needs to be refactored to account for different column
+    # types and use appropriate search methods. Ex. LIKE doesn't work for integers
+    # TODO refactor this to be more reliable for all column types
     def apply_search_to model
       if options[:search]
         if options[:new_search]
@@ -71,6 +93,7 @@ module TableMe
       end
     end
 
+    # beginning item for the offset relation call
     def start_item
       (options[:page].to_i - 1) * options[:per_page].to_i
     end

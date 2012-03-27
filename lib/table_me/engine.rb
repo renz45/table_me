@@ -1,10 +1,11 @@
-require File.expand_path('../table_me_helper/table_me_helper', __FILE__)
-require File.expand_path('../table_for_helper/table_for_helper', __FILE__)
+require_relative '../table_me_helper/table_me_helper'
+require_relative '../table_for_helper/table_for_helper'
 
 module TableMe
   class Engine < ::Rails::Engine
     isolate_namespace TableMe
 
+    # send the helper methods to actionview and action controller
     initializer "table_me" do
       ActionView::Base.send :include, TableMe::TableForHelper
       ActionController::Base.send :include, TableMe::TableMeHelper

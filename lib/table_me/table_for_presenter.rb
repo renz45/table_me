@@ -177,11 +177,18 @@ module TableMe
     def table_rows
       data.map do |d|
         <<-HTML
-          <tr>
+          <tr class="#{cycle('odd', 'even')}">
             #{table_column_for(d)}
           </tr>
         HTML
       end.join.html_safe
+    end
+
+    # cycle through an array of items, for now this is for row striping
+    # Row striping can be handled by css, so this might just get removed.
+    def cycle *items
+      @cycle_items = items if @cycle_items.nil? || @cycle_items.empty?
+      @cycle_items.pop
     end
 
     # it would ne nicer to encapsulate this into the column class, but then we have
@@ -189,11 +196,7 @@ module TableMe
     # sure if the encapsulation is worth the overhead
     def table_column_for data
       table_columns.map do |column|
-        if column.content
-          "<td>#{capture(data, &column.content)}</td>"
-        else
-          "<td>#{data[column.name]}</td>"
-        end
+        "<td>#{column.content ? capture(data, &column.content) : data[column.name]}</td>"
       end.join
     end
 

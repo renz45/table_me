@@ -19,29 +19,26 @@ module TableMe
     attr_accessor :params, :name
     attr_reader :data, :options
 
-    class << self
-      def data
-        @@data
-      end
+    # class << self
+    #   # These class variables may need to be cleared and data handled differently
+    #   def data
+    #     @@data
+    #   end
 
-      def options
-        @@options
-      end
-    end
+    #   def options
+    #     @@options
+    #   end
+    # end
 
-    @@data = {}
-    @@options = {}
+    # @@data = {}
+    # @@options = {}
     
     def initialize model, options = {}, params = {}
-      # this was more of a patch for the code. I need to go back through and normalize all
-      # the hash access so a normal has can be used with confidence
-      # TODO normalize hash access to strings or symbols
       @options = ActiveSupport::HashWithIndifferentAccess.new(options)
 
       set_defaults_for model
       parse_params_for params
       get_data_for model
-      @@options[self.name] = @options
     end
 
     # parse the params into an options hash that we can use
@@ -62,9 +59,7 @@ module TableMe
     def get_data_for model
       model = apply_search_to(model)
 
-      @@data[self.name] = @data = model.limit(options[:per_page])
-                                       .offset(start_item)
-                                       .order(options[:order])
+      @data = model.limit(options[:per_page]).offset(start_item).order(options[:order])
 
       options[:total_count] = model.count
       options[:page_total] = (options[:total_count] / options[:per_page].to_f).ceil

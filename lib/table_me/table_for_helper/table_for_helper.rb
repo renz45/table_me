@@ -58,8 +58,9 @@ require_relative '../table_for_presenter'
 
 module TableMe
   module TableForHelper
-    def table_for(model,options = {}, &block)
-      table_for_presenter = TableForPresenter.new(model,options,&block)
+    def table_for(model, options = {}, &block)
+
+      table_for_presenter = TableForPresenter.new(model, @table_me[model],options,&block)
       table_for_presenter.build_table
     end
     

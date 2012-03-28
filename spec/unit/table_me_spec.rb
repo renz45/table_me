@@ -169,40 +169,6 @@ describe "TableMePresenter" do
           it 'should equal {column: "email", query: "user"}' do
             presenter.options[:search].should eq search_object
           end
-
-        end
-
-        describe "get data out of class via class variables" do
-          before(:each) {presenter}
-          let(:presenter_class) {TableMe::TableMePresenter}
-
-          context "TableMe::TableMePresenter.data" do
-            it "should be a hash" do
-              presenter_class.data.class.should eq Hash
-            end
-
-            it 'should have a key which matches an instances name' do
-              presenter_class.data.has_key? presenter.name
-            end
-
-            it "should be equal to presenter.data" do
-              presenter_class.data[presenter.name].should eq presenter.data
-            end
-          end
-
-          context "TableMe::TableMePresenter.options" do
-            it "should be a hash" do
-              presenter_class.options.class.should eq Hash
-            end
-
-            it 'should have a key which is the same as an instance name' do
-              presenter_class.options.has_key? presenter.name
-            end
-
-            it "should be equal to presenter.data" do
-              presenter_class.options[presenter.name].should eq presenter.options
-            end
-          end
         end
       end 
 
@@ -246,51 +212,6 @@ describe "TableMePresenter" do
             presenter.options[:other_tables].should eq [params_multi_tables['tm_user']]
           end
         end
-
-        describe "get data out of class via class variables" do
-          let(:presenter2) { TableMe::TableMePresenter.new(User,{name: 'user_three'}, params_multi_tables) }
-          before(:each) {
-            presenter
-            presenter2
-          }
-          let(:presenter_class) {TableMe::TableMePresenter}
-
-          context "TableMe::TableMePresenter.data" do
-            it "should be a hash" do
-              presenter_class.data.class.should eq Hash
-            end
-
-            it 'should have a key which is the same as an presenter name' do
-              presenter_class.data.has_key? presenter.name
-            end
-
-            it 'should have a key which is the same as an presenter2 name' do
-              presenter_class.data.has_key? presenter2.name
-            end
-
-            it "should be equal to presenter.data" do
-              presenter_class.data[presenter.name].should eq presenter.data
-            end
-          end
-
-          context "TableMe::TableMePresenter.options" do
-            it "should be a hash" do
-              presenter_class.options.class.should eq Hash
-            end
-
-            it 'should have a key which is the same as an instance name' do
-              presenter_class.options.has_key? presenter.name
-            end
-
-            it 'should have a key which is the same as an presenter2 name' do
-              presenter_class.options.has_key? presenter2.name
-            end
-
-            it "should be equal to presenter.data" do
-              presenter_class.options[presenter.name].should eq presenter.options
-            end
-          end
-        end # "params[:table_me] = 'user|2|name ASC|email user'"
       end
     end # "with url params for multiple tables"
 
@@ -320,9 +241,5 @@ describe "TableMePresenter" do
         end
       end
     end
-
   end # 'with a model'
-
-  
-
 end

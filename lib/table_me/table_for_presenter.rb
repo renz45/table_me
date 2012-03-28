@@ -71,15 +71,17 @@ module TableMe
     attr_accessor :name, :options
     attr_reader :data
 
-    def initialize table_name, options = {}, &block
-      # self.parent = parent
-      self.options = options
+    def initialize table_name, table_me_presenter, options = {}, &block
+      @table_me_presenter = table_me_presenter
+
+      self.options = ActiveSupport::HashWithIndifferentAccess.new(options.merge(@table_me_presenter.options))
       self.name = table_name
       @block = block
 
       # required to get capture to work with haml
       init_haml_helpers if defined?(Haml)
 
+      setup_classes
       process_data_attributes 
     end
 
@@ -110,19 +112,24 @@ module TableMe
     # of the class variables in the controller and view, but there has to be a better way to do it.
     # TODO decouple this and options below
     def data
-      TableMePresenter.data[name.to_s]
+      @table_me_presenter.data
     end
 
 
     # same as data above, only with table options. Ideally this needs to be a value object instead
     # of just a hash. TODO use a value object instead of a hash, see table_vo.rb
-    def options
-      TableMePresenter.options[name.to_s]
-    end
+    # def options
+    #   @table_me_presenter.options
+    # end
 
 
     private
 
+
+    def setup_classes
+      # clear the filter saved to class
+      TableMe::Filter.init
+    end
 
     # create table filters if they exist
     def table_filters

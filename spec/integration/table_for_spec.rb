@@ -5,16 +5,15 @@ describe 'table_for helper html' do
   let(:block_content) {proc{|c| "<span>#{c.email}</span>"}}
   let(:block) { proc{|t| t.column :email, &block_content } }
   let(:table_me_presenter) {TableMe::TableMePresenter.new(User)}
-  let(:table_for_presenter) {TableMe::TableForPresenter.new(:user)}
-  let(:table_for_presenter_block) {TableMe::TableForPresenter.new(:user, &block)}
+  let(:table_me_data) {table_me_presenter.data}
+  let(:table_me_options) {table_me_presenter.options}
+  let(:table_for_presenter) {TableMe::TableForPresenter.new(:user, table_me_presenter)}
+  let(:table_for_presenter_block) {TableMe::TableForPresenter.new(:user, table_me_presenter, &block)}
   let(:email) {User.first.email}
   before(:each) do 
     30.times { FactoryGirl.create(:user) } 
     table_me_presenter
   end
-
-  let(:table_me_data) {TableMe::TableMePresenter.data['user']}
-  let(:table_me_options) {TableMe::TableMePresenter.options}
   
   describe 'TableForPresenter' do 
     context '#build_table with a table name' do

@@ -22,6 +22,9 @@ module TableMe
   module TableMeHelper
     def table_me(model, options = {})
       table_presenter = TableMePresenter.new(model, options,params)
+      @table_me ||= {}
+      @table_me[table_presenter.name] = table_presenter
+
       table_presenter.name
     end
   end

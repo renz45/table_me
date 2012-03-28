@@ -9,6 +9,10 @@ module TableMe
     
     @@filters = {}
 
+    def self.init
+      @@filters = {}
+    end
+
     def initialize options, column_name
       self.options = options
       self.column_name = column_name

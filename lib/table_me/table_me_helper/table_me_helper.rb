@@ -1,4 +1,4 @@
-require_relative '../../../table_me/table_me_presenter'
+require_relative '../table_me_presenter'
 module TableMe
 
   # Controller

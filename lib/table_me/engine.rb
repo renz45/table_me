@@ -1,5 +1,5 @@
-require_relative '../table_me_helper/table_me_helper'
-require_relative '../table_for_helper/table_for_helper'
+require_relative 'table_me_helper/table_me_helper'
+require_relative 'table_for_helper/table_for_helper'
 
 module TableMe
   class Engine < ::Rails::Engine

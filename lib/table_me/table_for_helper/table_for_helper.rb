@@ -1,4 +1,4 @@
-require File.expand_path('../../../table_me/table_for_presenter', __FILE__)
+require_relative '../table_for_presenter'
   
   # In your view you can create the table from the one initialized in the controller, 
   # the first parameter of table_for is the name set in table_me. By default the class 
